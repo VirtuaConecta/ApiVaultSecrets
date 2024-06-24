@@ -11,7 +11,7 @@ Vamos criar um projeto em C# com a finalidade de armazenar segredos com logins e
 
 
 Criando o projeto:
-
+![Exemplo](assets/Imagem1.png)
 Crie um novo projeto do tipo: API Web do ASP.NET Core
 
 
