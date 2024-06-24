@@ -14,7 +14,7 @@ Criando o projeto:
 ![Exemplo](assets/Imagem1.png)
 Crie um novo projeto do tipo: API Web do ASP.NET Core
 
-
+![Exemplo](assets/Imagem2.png)
 
 
 
