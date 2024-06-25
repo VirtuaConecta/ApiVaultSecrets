@@ -377,7 +377,7 @@ Uma Chave secreta é usada para gerar e validar tokens. Ela será armazenada em 
 
 ![Classe settings Secret](assets/Imagem42.png)
 
-##Usando o user-secrets
+## Usando o user-secrets
 
 Esta chave deve ser protegida e não pode ficar exposta. Novamente pode ficar nas variaveis de ambiente, criptografada no código de alguma forma que não se consiga ter acesso. No nosso caso, para exemplicafar usarei o user-secrets ferramenta útil para guardar informações sigilosas quando em teste e e execução local, visto que estes dados não sobem para o servidor ou git.
 
@@ -435,7 +435,7 @@ O serviço gerador de token JWT “GenerateToken” a ser chamado quando o usuá
 
 Sua interface ITokenService em .Application\Interfaces.
 
-**tokenHandler:** Cria uma instância de JwtSecurityTokenHandler, que é responsável por criar e manipular tokens JWT.
+**Estancia tokenHandler:** Cria uma instância de JwtSecurityTokenHandler, que é responsável por criar e manipular tokens JWT.
 
 **keyBytes:**  obtém a chave secreta tranformada em array de bytes
 
@@ -462,47 +462,45 @@ Sua interface ITokenService em .Application\Interfaces.
 UserServices: 
 
 
-
-
+![Classe UserServices](assets/Imagem51.png)
+![Classe UserServices1](assets/Imagem52.png)
    
 
-AuthenticateUserExist:   Verifica se um usuário com o nome de usuário fornecido existe no sistema, retornando o usuário encontrado ou null se não encontrado.
+**AuthenticateUserExist:**<br>
+
+	Verifica se um usuário com o nome de usuário fornecido existe no sistema, retornando o usuário encontrado ou null se não encontrado.
 
 
-Método Authenticate :  Autentica um usuário verificando se a senha fornecida corresponde à senha criptografada armazenada no sistema. Se a autenticação for bem-sucedida, retorna o usuário, caso contrário, retorna um novo objeto User vazio.
+**Método Authenticate :**
+	Autentica um usuário verificando se a senha fornecida corresponde à senha criptografada armazenada no sistema. Se a autenticação for bem-sucedida, retorna o usuário, caso contrário, retorna um novo objeto User vazio.
 
-CreateUser:  Cria um novo usuário após validar e criptografar a senha. Lança uma exceção se a senha não for válida. Remove a senha da resposta antes de retornar o usuário criado.
+**CreateUser:**
+	Cria um novo usuário após validar e criptografar a senha. Lança uma exceção se a senha não for válida. Remove a senha da resposta antes de retornar o usuário criado.
 
-GetAllUsers: Retorna todos os usuários no sistema, garantindo que as senhas não sejam incluídas nos resultados.
+**GetAllUsers:**
+	Retorna todos os usuários no sistema, garantindo que as senhas não sejam incluídas nos resultados.
 
-UpdateUserPassword: Atualiza a senha de um usuário existente após validar e criptografar a nova senha. Remove a senha da resposta antes de retornar o usuário atualizado.
+**UpdateUserPassword:**
+	Atualiza a senha de um usuário existente após validar e criptografar a nova senha. Remove a senha da resposta antes de retornar o usuário atualizado.
 
-IsValidPassword: Verifica se a senha é válida usando uma expressão regular. A senha deve ser alfanumérica e ter exatamente 32 caracteres.
-
-
-
-
-
-
-
-
-
-
+**IsValidPassword:**
+	Verifica se a senha é válida usando uma expressão regular. A senha deve ser alfanumérica e ter exatamente 32 caracteres.
 
 
 SecretsServices:
 
 
+![Classe SecretsServices](assets/Imagem53.png)
+![Classe SecretsServices1](assets/Imagem54.png)
 
+**GetSecretAsync:**
+	Busca um segredo pelo key. Se encontrado, descriptografa o valor antes de retornar o segredo.
 
+**CreateSecretAsync:**
+	caso a chave Key já não exista no banco de dados, criptografa o valor do segredo e o adiciona ao repositório
 
-
-GetSecretAsync:  Busca um segredo pelo key. Se encontrado, descriptografa o valor antes de retornar o segredo.
-
-CreateSecretAsync:  caso a chave Key já não exista no banco de dados, criptografa o valor do segredo e o adiciona ao repositório
-
-
-GetAllSecrets: Busca todos os segredos ( apenas a Key)  e define os valores criptografados como null antes de retornar a lista de segredos.
+**GetAllSecrets:**
+	Busca todos os segredos ( apenas a Key)  e define os valores criptografados como null antes de retornar a lista de segredos.
 
 
 Com as definições de Autenticação e Autorização vamos implementar os Serviços para os endpoints.
@@ -511,90 +509,69 @@ Para armazenas os parâmetros recebidos nos end points  /login (para autenticaç
 
 Foram criados as seguintes classes para transferência de dados em Application\Models: 
 
-    
+<p float="left">
+  <img src="assets/Imagem55.png" width="200" style="margin-right: 10px;"/>
+  <img src="assets/Imagem56.png" width="200" style="margin-left: 10px;" /> 
+</p>
 
 Em Program.cs confirmar que Autenticação e  Autorização  estão ativos nesta ordem:
 
-
+![Classe SProgram.cs Autenticacao](assets/Imagem57.png)
 
 Os endpoints estão na classe SecretEndpoints em Infrastrucure\Endpoints
 
-
-
-
-
-
-
-
-
-
+![Classe SecretEndpoints](assets/Imagem58.png)
+![Classe SecretEndpoints1](assets/Imagem59.png)
+![Classe SecretEndpoints2](assets/Imagem60.png)
 
 Esta classe  SecretEndpoints\MapSecretEndpoints são mapeados em Program.cs em:
 
+![Classe Program.cs MapSecretEndpoints](assets/Imagem61.png)
 
+**Cria um novo segredo:**<br>
+	Rota: /secrets<br>
+	Método HTTP: POST<br>
+	Parâmetros: Secret (dados do segredo), ISecretService (serviço para manipulação de segredos).<br>
+	Autorização: Requer política "AdminPolicy".<br>
 
+**Obter Segredo por Chave:**<br>
+	Rota: /secrets/{key}<br>
+	Método HTTP: GET<br>
+	Parâmetros: key (chave do segredo), ISecretService.<br>
+	Autorização: Requer política "AdminOrOperatorPolicy".<br>
 
-Cria um novo segredo:
-·  Rota: /secrets
-·  Método HTTP: POST
-·  Parâmetros: Secret (dados do segredo), ISecretService (serviço para manipulação de segredos).
-·  Autorização: Requer política "AdminPolicy".
+**Listar Segredos Existentes:**<br>
+	Rota: /getsecrets<br>
+	Método HTTP: GET<br>
+	Parâmetros: ISecretService.<br>
+	Autorização: Requer política "AdminPolicy".<br>
 
-Obter Segredo por Chave:
-·  Rota: /secrets/{key}
-·  Método HTTP: GET
-·  Parâmetros: key (chave do segredo), ISecretService.
-·  Autorização: Requer política "AdminOrOperatorPolicy".
+**Criar Token:**<br>
+	Rota: /login<br>
+	Método HTTP: POST<br>
+	Parâmetros: LoginModel (dados de login), IUserService, ITokenService.<br>
+	Autorização: Permite acesso anônimo.<br>
 
-Listar Segredos Existentes:
-·  Rota: /getsecrets
-·  Método HTTP: GET
-·  Parâmetros: ISecretService.
-·  Autorização: Requer política "AdminPolicy".
+**Criar/Atualizar Usuários:**<br>
+	Rota: /users<br>
+	Método HTTP: POST<br>
+	Parâmetros: User (dados do usuário), IUserService, IAuthorizationService, ClaimsPrincipal (usuário atual).<br>
+	Autorização: Requer política "AdminPolicy".<br>
 
-Criar Token:
-·  Rota: /login
-·  Método HTTP: POST
-·  Parâmetros: LoginModel (dados de login), IUserService, ITokenService.
-·  Autorização: Permite acesso anônimo.
+**Listar Usuários Existentes:**<br>
+	Rota: /getusers<br>
+	Método HTTP: GET<br>
+	Parâmetros: IUserService.<br>
+	Autorização: Requer política "AdminPolicy".<br>
 
-Criar/Atualizar Usuários:
-·  Rota: /users
-·  Método HTTP: POST
-·  Parâmetros: User (dados do usuário), IUserService, IAuthorizationService, ClaimsPrincipal (usuário atual).
-·  Autorização: Requer política "AdminPolicy".
-
-Listar Usuários Existentes:
-·  Rota: /getusers
-·  Método HTTP: GET
-·  Parâmetros: IUserService.
-·  Autorização: Requer política "AdminPolicy".
-
-Criptografar Texto:
-·  Rota: /configure/encrypt
-·  Método HTTP: POST
-·  Parâmetros: TextToEncripty (dados de texto para criptografar).
-·  Autorização: Permite acesso anônimo.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+**Criptografar Texto:**<br>
+	Rota: /configure/encrypt<br>
+	Método HTTP: POST<br>
+	Parâmetros: TextToEncripty (dados de texto para criptografar).<br>
+	Autorização: Permite acesso anônimo.<br>
 
 
 Para testar os endpoints pode-se usar o Postman ou no proprio Visual Studio no arquivo SecretVault.http onde temos todos os endpoints inscritos. 
 
-
+![Classe SecretVault.http](assets/Imagem62.png)
+![Classe SecretVault.http1](assets/Imagem63.png)
