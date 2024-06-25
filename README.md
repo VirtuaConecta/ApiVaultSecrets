@@ -142,40 +142,29 @@ Executar o migrations no terminal do Visual studio de dentro da pasta do projeto
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+![Comando migrations no terminal ](assets/Imagem16.png)
 
 
 A pasta Migration é criada com os arquivos de migração para a criação do banco de dados.
 
- 
+ ![Tela estrutura de pastas migrations ](assets/Imagem17.png)
 
 Agora o comando para aplicar as migrações e criar o banco de dados.: dotnet ef database update
 
 Obs: em caso de erro nesta etapa remova a migração com: dotnet ef migrations remove e apague o banco se existir.
 
 
-
+![Comando database update no terminal ](assets/Imagem18.png)
 
 
 Como não tem um caminho especificado o DB foi criado na raíz do projeto:
 
-
+![Tela explorer database](assets/Imagem19.png)
 
 Analisando o DB criado: 
 
 
+![Tela Sqlite browser database](assets/Imagem20.png)
 
 
 Vamos agora criar os métodos necessários  para utilizar o DB na aplicação.
