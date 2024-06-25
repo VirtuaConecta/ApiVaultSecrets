@@ -8,7 +8,7 @@
 
 - [Entity Framework](#entity-framework)
 
-- [Criptografia(#criptografia)
+- [Criptografia](#criptografia)
  
 - [Autenticação JWT](#autenticação-jwt)
 
