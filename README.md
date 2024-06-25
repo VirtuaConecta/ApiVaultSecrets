@@ -1,5 +1,5 @@
 PROJETO SECRETS API
-
+Arquitetura "ONION"
 Minimal API C#
 Entity Framework
 SQLite
@@ -11,22 +11,21 @@ Vamos criar um projeto em C# com a finalidade de armazenar segredos com logins e
 
 
 Criando o projeto:
-![Exemplo](assets/Imagem1.png)
+
 Crie um novo projeto do tipo: API Web do ASP.NET Core
 
-![Exemplo](assets/Imagem2.png)
+![Tela de criaça do projeto](assets/Imagem1.png)
 
 
 
 Chame o projeto de  de SecretVault: 
 
-
-
+![Tela de configuração do projeto](assets/Imagem2.png)
 
 
 Não usaremos controllers, docker, HTTPS ou swagger:
 
-
+![Tela de informações adicionais do projeto](assets/Imagem3.png)
 
 
 Arquitetura Onion: 
@@ -45,6 +44,10 @@ São:
 Microsoft.EntityFrameworkCore.Sqlite - Fornece suporte ao banco de dados SQLite no Entity FrameWork Core.
 Microsoft.EntityFrameworkCore.Design - Pacote necessário para executar comandos do EF que geram código. Será usado para criar as tabelas.
 Microsoft.EntityFrameworkCore.Tools - Este pacote permite a execução de comandos EF Core no CLI (Command Line Interface) e no Package Manager Console do Visual Studio. Ele é utilizado para facilitar a criação, aplicação e gerenciamento de migrações de banco de dados e outras tarefas de manutenção do esquema do banco de dados.
+
+
+![Tela de gerenciamento de pacotes](assets/Imagem4.png)
+
 
 Usando o EF podemos a partir das entidades criar o banco de dados.
 Neste projeto simples teremos duas entidades  :
@@ -66,17 +69,10 @@ e
 
 
 
-
-
-
-
-
-
-
-
 Na estrutura que criamos estas entidades fazem parte do Domínio (Domain)
 SecretVault\Domain\Entities
 
+![Tela de Estrutuar de pastas 1](assets/Imagem5.png)
 
 
 Agora vamos criar o DbContext e DbSet
@@ -84,6 +80,7 @@ Agora vamos criar o DbContext e DbSet
 A classe responsável será SecretManagerContext.cs em SecretVault\Infrastructure\Data\Context
 
 
+![Tela classe SecretVautContext](assets/Imagem7.png)
 
 
 Esta classe herda de DbContext do EF que é responsável pela representação do banco em memória
@@ -97,14 +94,16 @@ O método OnModelCreating  é uma ferramenta  para configurar e personalizar o c
 modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
 Informará as configurações das tabelas que serão criadas automaticamente, estas configurações estão nas  arquivos SecretMapping  e UserMapping.
  
+![Tela estrura de pastas 2](assets/Imagem8.png)
 
 Estes arquivos implentam a interface IEntityTypeConfiguration para cada modelo de dados definindo chave primaria, tipo de campo, se é requido etc
 UserMapping.cs:
 
-
+![Tela classe UserMaipping](assets/Imagem9.png)
 
 SecretMapping.cs:
 
+![Tela classe SecretMapping](assets/Imagem10.png)
 
 Agora vamos definir a string de conexão com o local para o banco. Como estou usando o Sqlite. Não é necessário prévia instalação de um servidor de banco de dados. O Sqlite embraca com facilidade na aplicação.
 
