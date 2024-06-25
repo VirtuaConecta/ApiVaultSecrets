@@ -5,14 +5,20 @@
 - [Introdução](#Introdução)
 
 - [Arquitetura Onion](#arquitetura-onion)
+
+- [Entity Framework](#entity-framework)
+
+- [Criptografia(#criptografia)
  
 - [Autenticação JWT](#autenticação-jwt)
 
 - [Usando o user-secrets](#usando-o-user-secrets)
 
+- [Usando o user-secrets](#usando-o-user-secrets)
 
+- [EndPoints](#endPoints)
 
-
+	
 ## Introdução
 
 Vamos criar um projeto em C# com a finalidade de armazenar segredos com logins e senha de bancos de dados, Keys, etc. Este projeto será uma minimal API com end point para gerenciar usuários e os segredos. Terá autenticação JWT, sendo necessário ter credencias para acessar a API.  Estas informações serão armazenadas em banco de dados Sqlite e a arquitetura será do tipo “ONION”. É um projeto simples mas completo e útil em muitas situações.
@@ -48,8 +54,13 @@ A divisão comum das camadas na arquitetura Onion é a seguinte:<br>
 
 Um dos principais benefícios da arquitetura Onion é que ela promove o baixo acoplamento e a alta coesão. As dependências fluem de fora para dentro, significando que as camadas externas podem referenciar as camadas internas, mas não o contrário. Isso permite encapsular a lógica de negócio nas camadas de domínio e aplicação, mantendo-a isolada dos detalhes de implementação específicos da infraestrutura.
 Além disso, as camadas externas (Infrastructure e Presentation) podem implementar interfaces definidas nas camadas internas, permitindo uma maior flexibilidade e testabilidade, pois a lógica de negócios pode ser testada independentemente dos detalhes de implementação.
+
 Em resumo, a arquitetura Onion facilita a manutenção e a escalabilidade de sistemas complexos, promovendo boas práticas de design, como a inversão de dependência e a separação de responsabilidades.
+
 Vamos com começar criando as entidades e a estrutura de dados. Neste projeto usaremos o ORM (Object-Relational Mappers) Entity Framework (EF).
+
+## Entity Framework
+
 A primeira coisa a fazer é Instalar os pacotes para o EF. Neste projeto o banco de dados é um Sqlite.
 
 São:
@@ -217,6 +228,8 @@ A classe UserRepository implementa a interface IUserRepository :
  **Busca de Usuários:* GetByUsernameAndPasswordAsync e GetByUsernameAsync recuperam usuários.<br>
  **Atualização de Usuários:** UpdateAsync atualiza um usuário existente.<br>
  **Listagem de Usuários:** GetAllAsync retorna todos os usuários no banco de dados.<br>
+
+## Criptografia
 
 Todos os secredos e senhas gravados no banco serão criptografados. Assim vamos criar a classe EncryptionService como os métodos Encrypt e Decrypt para encriptar e desencriptar os registros.
 
@@ -449,6 +462,8 @@ Sua interface ITokenService em .Application\Interfaces.
 
 	1- Criação do Token: Usa o tokenHandler para criar o token JWT com base no tokenDescriptor.
 	2- Escrita do Token: Converte o token para sua representação em string.
+	
+## EndPoints	
 
  As classes SecretService e UserService devem ser colocadas na camada de Application\Services. Esta camada é responsável por orquestrar as operações de negócio e atuar como intermediária entre a camada de domínio (onde estão as regras de negócio) e a camada de infraestrutura (onde estão os repositórios e outros serviços de acesso a dados).
 
@@ -570,7 +585,7 @@ Esta classe  SecretEndpoints\MapSecretEndpoints são mapeados em Program.cs em:
 	Parâmetros: TextToEncripty (dados de texto para criptografar).<br>
 	Autorização: Permite acesso anônimo.<br>
 
-
+## Testes dos endpoints
 Para testar os endpoints pode-se usar o Postman ou no proprio Visual Studio no arquivo SecretVault.http onde temos todos os endpoints inscritos. 
 
 ![Classe SecretVault.http](assets/Imagem62.png)
