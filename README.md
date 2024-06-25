@@ -1,16 +1,22 @@
-PROJETO SECRETS API
-Arquitetura "ONION"
-Minimal API C#
-Entity Framework
-SQLite
-JWT
+#PROJETO SECRETS VAULT MINIMAL API C#
 
-Projeto Cofre de segredos.
+## Tópicos
+
+- [Arquitetura](#ONION)
+ 
+- [Recurso](#Entity Framework)
+
+- [Recurso](#SQLite)
+
+- [Recurso](#JWT)
+
+
+## Introdução
 
 Vamos criar um projeto em C# com a finalidade de armazenar segredos com logins e senha de bancos de dados, Keys, etc. Este projeto será uma minimal API com end point para gerenciar usuários e os segredos. Terá autenticação JWT, sendo necessário ter credencias para acessar a API.  Estas informações serão armazenadas em banco de dados Sqlite e a arquitetura será do tipo “ONION”. É um projeto simples mas completo e útil em muitas situações.
 
 
-Criando o projeto:
+## Criando o projeto:
 
 Crie um novo projeto do tipo: API Web do ASP.NET Core
 
@@ -28,7 +34,7 @@ Não usaremos controllers, docker, HTTPS ou swagger:
 ![Tela de informações adicionais do projeto](assets/Imagem3.png)
 
 
-__ Arquitetura Onion:  __ <br>
+*Arquitetura Onion:* <br>
 
 A arquitetura Onion é uma abordagem para resolver os problemas de acoplamento e separação de responsabilidades encontrados na arquitetura tradicional em três camadas. Ela é visualmente representada como círculos concêntricos, similares a uma cebola cortada ao meio, onde cada camada representa um nível de abstração.
 A divisão comum das camadas na arquitetura Onion é a seguinte:<br>
