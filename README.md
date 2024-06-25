@@ -79,9 +79,7 @@ Agora vamos criar o DbContext e DbSet
 
 A classe responsável será SecretManagerContext.cs em SecretVault\Infrastructure\Data\Context
 
-
 ![Tela classe SecretVautContext](assets/Imagem6.png)
-
 
 Esta classe herda de DbContext do EF que é responsável pela representação do banco em memória
 
