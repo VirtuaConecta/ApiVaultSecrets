@@ -14,9 +14,9 @@
 
 - [Usando o user-secrets](#usando-o-user-secrets)
 
-- [Usando o user-secrets](#usando-o-user-secrets)
-
 - [EndPoints](#endPoints)
+
+- [Testes dos endpoints](#testes-dos-endpoints)
 
 	
 ## Introdução
