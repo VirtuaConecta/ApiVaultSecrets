@@ -2,13 +2,10 @@
 
 ## Tópicos
 
-- [Arquitetura](#ONION)
+- [Introdução](#Introdução)
+
+- [Arquitetura ONION](#Arquitetura Onion)
  
-- [Recurso](#Entity Framework)
-
-- [Recurso](#SQLite)
-
-- [Recurso](#JWT)
 
 
 ## Introdução
@@ -34,7 +31,7 @@ Não usaremos controllers, docker, HTTPS ou swagger:
 ![Tela de informações adicionais do projeto](assets/Imagem3.png)
 
 
-*Arquitetura Onion:* <br>
+## Arquitetura Onion: <br>
 
 A arquitetura Onion é uma abordagem para resolver os problemas de acoplamento e separação de responsabilidades encontrados na arquitetura tradicional em três camadas. Ela é visualmente representada como círculos concêntricos, similares a uma cebola cortada ao meio, onde cada camada representa um nível de abstração.
 A divisão comum das camadas na arquitetura Onion é a seguinte:<br>
@@ -180,52 +177,59 @@ Analisando o DB criado:
 
 Vamos agora criar os métodos necessários  para utilizar o DB na aplicação.
 
-Criaremos as interfaces do repositório na camada Domain. A camada Domain é o núcleo da aplicação onde estão as entidades de negócio e as interfaces do repositorio. Pela arquitetura :
-·  Independência das Camadas Externas:
-·  As camadas externas podem mudar mais frequentemente do que as internas. Por exemplo, você pode trocar a implementação de acesso a dados (camada Infrastructure) sem afetar as regras de negócio (camada Domain).
-·  Dependências Invertidas:
-·  As camadas externas dependem das internas e nunca o contrário. Isso significa que a Domain não deve depender de implementações específicas de infraestrutura.
+Criaremos as interfaces do repositório na camada Domain. A camada Domain é o núcleo da aplicação onde estão as entidades de negócio e as interfaces do repositorio.<br>
+ Pela arquitetura :<br>
+·  Independência das Camadas Externas:<br>
+	As camadas externas podem mudar mais frequentemente do que as internas. Por exemplo, você pode trocar a implementação de acesso a dados (camada Infrastructure) sem afetar as regras de negócio (camada Domain).<br>
+·  Dependências Invertidas:<br>
+	As camadas externas dependem das internas e nunca o contrário. Isso significa que a Domain não deve depender de implementações específicas de infraestrutura.<br>
+ 
  Interfaces:
 
-
+![Classe ISecretRepository](assets/Imagem21.png)
 
 e 
 
-
+![Classe IUserRepository](assets/Imagem22.png)
 
  Implementamos os métodos nas classes SecretRepository e UserRepository estas classes estarão em Infrastruture\Repositories
 
-
+![Classe SecretRepository](assets/Imagem23.png)
 
 A classe SecretRepository implementa a interface ISecretRepository:
-Busca por Chave: GetByKeyAsync recupera um segredo com base na chave fornecida.
-Adição de Segredos: AddAsync adiciona um novo segredo ao banco de dados.
-Listagem de Segredos: GetAllAsync retorna todos os segredos no banco de dados.(lista apenas os nomes (Key) e não os valores)
+
+ *Busca por Chave:* GetByKeyAsync recupera um segredo com base na chave fornecida.
+ *Adição de Segredos:* AddAsync adiciona um novo segredo ao banco de dados.
+ *Listagem de Segredos:* GetAllAsync retorna todos os segredos no banco de dados.(lista apenas os nomes (Key) e não os valores)
+ 
 e 
 
-
+![Classe UserRepository](assets/Imagem24.png)
 
 A classe UserRepository implementa a interface IUserRepository :
-Adição de Usuários: AddAsync adiciona um novo usuário ao banco de dados.
-Busca de Usuários: GetByUsernameAndPasswordAsync e GetByUsernameAsync recuperam usuários.
-Atualização de Usuários: UpdateAsync atualiza um usuário existente.
-Listagem de Usuários: GetAllAsync retorna todos os usuários no banco de dados.
+
+ *Adição de Usuários:* AddAsync adiciona um novo usuário ao banco de dados.
+ *Busca de Usuários:* GetByUsernameAndPasswordAsync e GetByUsernameAsync recuperam usuários.
+ *Atualização de Usuários:* UpdateAsync atualiza um usuário existente.
+ *Listagem de Usuários:* GetAllAsync retorna todos os usuários no banco de dados.
 
 Todos os secredos e senhas gravados no banco serão criptografados. Assim vamos criar a classe EncryptionService como os métodos Encrypt e Decrypt para encriptar e desencriptar os registros.
 
 Esta classe será crida na camada Infrastructure\Services. Porque : 
-·  Responsabilidade: A criptografia e descriptografia de dados são detalhes de implementação e não fazem parte do domínio do negócio. Eles são aspectos técnicos que podem variar sem afetar as regras de negócio.
-·  Flexibilidade: Colocar o serviço de criptografia na camada de infraestrutura permite que você altere a implementação da criptografia (por exemplo, trocar o algoritmo de criptografia) sem afetar outras partes da aplicação (Domínio de ter pouca alteração).
-·  Separação de Preocupações (Separation of Concerns - SoC): Mantém a lógica de negócio limpa e focada em suas responsabilidades específicas, delegando as preocupações de segurança para a camada apropriada.
-A sua interface IEncryptionService será criada na camada Applications. A camada Infrastructure deve conter as implementações enquanto Application e Domain dependem de abstrações. Como esta interface não está ligada ao negócio em si, ficará na Application\Interfaces.
 
+ *Responsabilidade:* A criptografia e descriptografia de dados são detalhes de implementação e não fazem parte do domínio do negócio. Eles são aspectos técnicos que podem variar sem afetar as regras de negócio.<br>
+ *Flexibilidade:* Colocar o serviço de criptografia na camada de infraestrutura permite que você altere a implementação da criptografia (por exemplo, trocar o algoritmo de criptografia) sem afetar outras partes da aplicação (Domínio de ter pouca alteração).<br>
+ *Separação de Preocupações (Separation of Concerns - SoC):* Mantém a lógica de negócio limpa e focada em suas responsabilidades específicas, delegando as preocupações de segurança para a camada apropriada.<br>
 
+A sua interface IEncryptionService será criada na camada Applications. A camada Infrastructure deve conter as implementações enquanto Application e Domain dependem de abstrações. Como esta interface não está ligada ao negócio em si, ficará na Application\Interfaces.<br>
+
+![Classe IEncryptionService](assets/Imagem25.png)
 
 E a classe EncryptionService:
 
 Construtor: 
 
-
+![Classe EncryptionService](assets/Imagem26.png)
 
 No construtor recebe-se  a chave da criptografia converte para um array de bytes que será usado nos métodos.
 
