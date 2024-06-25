@@ -80,7 +80,7 @@ Agora vamos criar o DbContext e DbSet
 A classe responsável será SecretManagerContext.cs em SecretVault\Infrastructure\Data\Context
 
 
-![Tela classe SecretVautContext](assets/Imagem7.png)
+![Tela classe SecretVautContext](assets/Imagem6.png)
 
 
 Esta classe herda de DbContext do EF que é responsável pela representação do banco em memória
@@ -94,16 +94,16 @@ O método OnModelCreating  é uma ferramenta  para configurar e personalizar o c
 modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
 Informará as configurações das tabelas que serão criadas automaticamente, estas configurações estão nas  arquivos SecretMapping  e UserMapping.
  
-![Tela estrura de pastas 2](assets/Imagem8.png)
+![Tela estrura de pastas 2](assets/Imagem7.png)
 
 Estes arquivos implentam a interface IEntityTypeConfiguration para cada modelo de dados definindo chave primaria, tipo de campo, se é requido etc
 UserMapping.cs:
 
-![Tela classe UserMaipping](assets/Imagem9.png)
+![Tela classe UserMaipping](assets/Imagem8.png)
 
 SecretMapping.cs:
 
-![Tela classe SecretMapping](assets/Imagem10.png)
+![Tela classe SecretMapping](assets/Imagem9.png)
 
 Agora vamos definir a string de conexão com o local para o banco. Como estou usando o Sqlite. Não é necessário prévia instalação de um servidor de banco de dados. O Sqlite embraca com facilidade na aplicação.
 
@@ -111,14 +111,15 @@ A string de conexão é “Data Source=SecretVaultContext.db”
 
 Como se trata de um banco local vamos definir a string de conexão em appSettings.json , se usássemos um banco em servidor com dados sensíveis como login e senha usaríamos para testes locais o user-secrets e variáveis de ambiente em produção por exemplo entre outras técnicas que existem.
 
-
+![AppSettings 1](assets/Imagem10.png)
 
 No próximo passo precisamos registrar o DbContext. Ao invés de deixar no Program.cs por uma questão de organização vou deixar na camada infrastructure pois ela trata da configuração de dependência e serviços que suportam a aplicação mas não faz parte da lógica de negócios. Será uma classe estatica chamada ServiceConfiguration.
 
-
+![Classe ServiceConfiguration ](assets/Imagem11.png)
 
 Também criamos uma classe Settings  que é responsável por armazenar configurações globais e valores constantes usados em várias partes do aplicativo. Ficará na camada  Infrastructure, pois é responsável por fornecer detalhes de configuração que são específicos do ambiente de execução e que suportam a aplicação, mas não fazem parte direta da lógica de negócios.
 
+![Classe Settings ](assets/Imagem12.png)
 
 Nesta classe é registrado  as credencias do usuário master inicial para a criação do Banco de dados.
 
@@ -128,16 +129,16 @@ Também limparemos os  dados de teste carregados na criação do projeto referen
 
 Program.cs
 
-
+![Classe Program.cs ](assets/Imagem13.png)
 
 Agora vamos executar o processo para criar o banco de dados.
 
 Primeiro vamos compilar a aplicação e ver se há algum erro.
 
 
+![Comando build no terminal ](assets/Imagem14.png)
 
-
-
+![Resposta comando build no terminal ](assets/Imagem15.png)
 
 Executar o migrations no terminal do Visual studio de dentro da pasta do projeto . Aqui será gerado uma migração que contém as instruções para criar o esquema inicial do banco de dados.
 

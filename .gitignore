@@ -32,6 +32,13 @@ bld/
 *.opendb
 *.db
 
+# Ignorar arquivos SQLite e temporários no diretório SecretVault
+SecretVault/*.db
+SecretVault/*.sqlite
+SecretVault/*.sqlite3
+SecretVault/*.db-shm
+SecretVault/*.db-wal
+
 # Visual Studio 2019
 .vscode/
 
