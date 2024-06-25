@@ -6,6 +6,11 @@
 
 - [Arquitetura Onion](#arquitetura-onion)
  
+- [Autenticação JWT](#autenticação-jwt)
+
+- [Usando o user-secrets](#usando-o-user-secrets)
+
+
 
 
 ## Introdução
@@ -295,131 +300,130 @@ Crie uma variável de Ambiente:
 
        
 <p float="left">
-  <img src="assets/Imagem32.png" width="200" style="margin-right: 10px;"/>
-  <img src="assets/Imagem33.png" width="200" style="margin-left: 10px;" /> 
+  <img src="assets/Imagem32.png" width="300" style="margin-right: 10px;"/>
+  <img src="assets/Imagem33.png" width="300" style="margin-left: 10px;" /> 
 </p>
 
 Agora registramos em Program.cs:
 
-
+![Classe Program.cs variável de Ambiente](assets/Imagem34.png)
 
  Environment.GetEnvironmentVariable("PRIMARY_ENCRYPTION_KEY") captura o valor registrado nas variaveis de ambiente.
  Fazemos uma validação para caso de, por algum problema vier nulo ou vazio encerrando a execução.
 
 Com esta chave agora criamos uma instância concreta de EncryptionService e passá-la para as configurações onde garantimos que essa instância específica seja usada em toda a aplicação. O registro no contêiner como um singleton permite que a instância seja compartilhada e injetada em qualquer lugar onde IEncryptionService seja necessário
 
-
+![Classe PEncryptionService](assets/Imagem35.png)
 
 Depois em AddApplicationServices:
 
-
+![Classe AddApplicationServices](assets/Imagem36.png)
 
 Agora com tudo interligado criaremos um método de inicialização de dados  para criar o usuário admin no banco de dados.
-
 
 A classe Infrastructure\Data|initialization\DataInitializer sera criada.
 
 
+![Estrutura de pastas DataInitializer](assets/Imagem37.png)
 
 Ela basicamente verifica se ja existe um usuário criado e se não tiver cria o Usuário Admin com uma senha padrão que será salva criptografada no banco de dados. Esta senha poderá ser alterado posteriormente pelo endpoint de criação\atualização de usuários.
 
-
-
-
-
+![Classe DataInitializer](assets/Imagem38.png)
 
 
 Esta classe será chamada na inicialização da aplicação em Program.cs
 
 
+![Classe Program Inicializer](assets/Imagem39.png)
 
+O using com **CreateScope()** cria um container de injeção de dependência separado e independente. Isso permite que serviços com ciclo de vida Scoped sejam instanciados e utilizados dentro desse escopo, garantindo que sejam corretamente descartados após o uso.
 
-O using com CreateScope() cria um container de injeção de dependência separado e independente. Isso permite que serviços com ciclo de vida Scoped sejam instanciados e utilizados dentro desse escopo, garantindo que sejam corretamente descartados após o uso.
+A partir do escopo criado, **scope.ServiceProvider** é usado para acessar o container de injeção de dependência que pode resolver os serviços registrados.
 
-A partir do escopo criado, scope.ServiceProvider é usado para acessar o container de injeção de dependência que pode resolver os serviços registrados.
-
-services.GetRequiredService<T> resolve as instâncias de IUserRepository e IEncryptionService. Se o serviço não estiver registrado, lança uma exceção, garantindo que o código falhe rapidamente se a dependência não estiver configurada corretamente. Isso ajuda a detectar problemas de configuração durante o desenvolvimento.
+**services.GetRequiredService<T>** resolve as instâncias de IUserRepository e IEncryptionService. Se o serviço não estiver registrado, lança uma exceção, garantindo que o código falhe rapidamente se a dependência não estiver configurada corretamente. Isso ajuda a detectar problemas de configuração durante o desenvolvimento.
 
 Finalmente, chama o método InitializeAsync do DataInitializer, passando as instâncias resolvidas de IUserRepository e IEncryptionService. 
 
+Rodando a aplicação o registro é criado.
 
-
+![BROWSER Sqlite tabela Users](assets/Imagem40.png)
 
 Agora por fim vamos  implementar o processo de autenticação e  os endpoints de comunicação.
 
-
 A autenticação do usuário para capturar ou gerenciar o segredos será do tipo JWT (Json Web Token).
-
 
 Primeiramente importamos o pacote Microsoft.AspNetCore.Authentication.JwtBearer.
 
+![Tela visual Studio Gerenciador de pacotes JWT](assets/Imagem41.png)
 
 
-Uma breve explicação de como funciona a autenticação JWT:
+## Autenticação JWT
 
-·  Autenticação Inicial:
-O cliente envia suas credenciais (como nome de usuário e senha) para o servidor em uma requisição de login.
-·  Geração do Token:
-O servidor verifica as credenciais. Se forem válidas, ele gera um JWT contendo as informações do usuário (claims) e uma data de expiração.
-·  Envio do Token:
-O servidor retorna o JWT para o cliente.
-·  Armazenamento do Token:
-O cliente armazena o JWT (geralmente em localStorage ou cookies) e o usa para autenticar futuras requisições.
-·  Envio do Token em Requisições:
-Para cada requisição subsequente, o cliente envia o JWT no cabeçalho de autorização HTTP (Authorization: Bearer <token>).
-·  Validação do Token:
-O servidor valida o JWT em cada requisição. Se o token for válido e não expirou, o servidor processa a requisição e retorna a resposta.
+**Autenticação Inicial:**<br>
+	cliente envia suas credenciais (como nome de usuário e senha) para o servidor em uma requisição de login.<br>
+**Geração do Token:**<br>
+	servidor verifica as credenciais. Se forem válidas, ele gera um JWT contendo as informações do usuário (claims) e uma data de expiração.<br>
+**Envio do Token:**<br>
+	servidor retorna o JWT para o cliente.<br>
+**Armazenamento do Token:**<br>
+	cliente armazena o JWT (geralmente em localStorage ou cookies) e o usa para autenticar futuras requisições.<br>
+**Envio do Token em Requisições:**<br>
+	Para cada requisição subsequente, o cliente envia o JWT no cabeçalho de autorização HTTP (Authorization: Bearer token).<br>
+**Validação do Token:**<br>
+	servidor valida o JWT em cada requisição. Se o token for válido e não expirou, o servidor processa a requisição e retorna a resposta.<br>
 
 
- Uma Chave secreta usada para gerar e validar tokens.
+Uma Chave secreta é usada para gerar e validar tokens. Ela será armazenada em uma variavel global em Settings. 
 
-Ela será armazenada em uma variavel global em Settings. 
+![Classe settings Secret](assets/Imagem42.png)
 
-Usando o user-secrets
+##Usando o user-secrets
+
 Esta chave deve ser protegida e não pode ficar exposta. Novamente pode ficar nas variaveis de ambiente, criptografada no código de alguma forma que não se consiga ter acesso. No nosso caso, para exemplicafar usarei o user-secrets ferramenta útil para guardar informações sigilosas quando em teste e e execução local, visto que estes dados não sobem para o servidor ou git.
 
-Adicionar o user secrets ao projeto. Ir atá a pasta do projeto e digitar:  dotnet user-secrets init
+Adicionar o user secrets ao projeto. Ir atá a pasta do projeto e digitar:  **dotnet user-secrets init**
 
-
+![Terminal user-secrets](assets/Imagem43.png)
 
 Este comando adicionará uma entrada UserSecretsId ao seu arquivo .csproj, indicando que o projeto tem suporte para User Secrets.
 
-
+![Entrada Arquivo proj ID user-secrets](assets/Imagem44.png)
 
 Depois de inicializar User Secrets, você pode adicionar a chave secreta do JWT aos User Secrets. No terminal, execute o seguinte comando: dotnet user-secrets set "JwtSettings:Secret" "your-secret-key-here"
 
+![Terminal SET user-secrets](assets/Imagem45.png)
 
 
+A chave será armazenada em um local seguro no sistema, associado ao projeto.Agora a chave é carregada no Program.cs
 
-A chave será armazenada em um local seguro no sistema, associado ao projeto.
-
-Agora a chave é carregada no Program.cs
-
-
+![Classe Program.cs Setting.Secrets](assets/Imagem46.png)
 
 Com a chave implementamos o JWT em ServiceConfiguration\ConfigureAuthentication:
 
+![Classe ServiceConfiguration\ConfigureAuthentication ](assets/Imagem47.png)
 
 
+**var key** Armazena  chave usada para assinar os tokens JWT.É um array de bytes UTF8.
 
-Var key Armazena  chave usada para assinar os tokens JWT.É um array de bytes UTF8.
+**AddAuthentication** define as configurações de autenticação vamos deixar de forma padrão.
 
-AddAuthentication define as configurações de autenticação vamos deixar de forma padrão.
+**AddJwtBearer:**
 
-AddJwtBearer neste bloco temos:
-RequireHttpsMetadata: Define se o HTTPS é obrigatório. No desenvolvimento, pode ser falso, mas em produção, deve ser verdadeiro.
+neste bloco temos:<br>
+**RequireHttpsMetadata:** Define se o HTTPS é obrigatório. No desenvolvimento, pode ser falso, mas em produção, deve ser verdadeiro.
 
-SaveToken: Indica se o token deve ser salvo na autenticação.
+**SaveToken:** Indica se o token deve ser salvo na autenticação.
 
-TokenValidationParameters:
-ValidateIssuerSigningKey: Habilita a validação da chave de assinatura do emissor.
-IssuerSigningKey: Define a chave de assinatura usada para validar o token JWT.
-ValidateIssuer: Desabilita a validação do emissor do token.
-ValidateAudience: Desabilita a validação do público do token.
+**TokenValidationParameters:**<br>
+	ValidateIssuerSigningKey: Habilita a validação da chave de assinatura do emissor.<br>
+	IssuerSigningKey: Define a chave de assinatura usada para validar o token JWT.<br>
+	ValidateIssuer: Desabilita a validação do emissor do token.<br>
+	ValidateAudience: Desabilita a validação do público do token.<br>
 
-AddPolicy:
-AdminPolicy: Exige que o usuário tenha o papel (role) de "Admin".
-AdminOrOperatorPolicy: Exige que o usuário tenha um dos papéis (roles) "Admin" ou "Operator".
+**AddAuthorization:** <br>
+	AddPolicy:<br>
+		AdminPolicy: Exige que o usuário tenha o papel (role) de "Admin".<br>
+		AdminOrOperatorPolicy: Exige que o usuário tenha um dos papéis (roles) "Admin" ou "Operator".<br>
 
 
 A classe TokenService gera tokens JWT que são usados para autenticação. O token contém informações sobre o usuário (nome e papel) e é assinado digitalmente para garantir a integridade e a autenticidade. O token pode então ser enviado ao cliente e incluído em requisições subsequentes para autenticação.
@@ -427,45 +431,33 @@ A classe TokenService gera tokens JWT que são usados para autenticação. O tok
 O serviço gerador de token JWT “GenerateToken” a ser chamado quando o usuário buscar a autenticação será colocado em Infrasturcuture\Services\TokenService: 
 
 
-
+![Classe TokenService](assets/Imagem48.png)
 
 Sua interface ITokenService em .Application\Interfaces.
 
-tokenHandler: Cria uma instância de JwtSecurityTokenHandler, que é responsável por criar e manipular tokens JWT.
+**tokenHandler:** Cria uma instância de JwtSecurityTokenHandler, que é responsável por criar e manipular tokens JWT.
 
-keyBytes:  obtém a chave secreta tranformada em array de bytes
+**keyBytes:**  obtém a chave secreta tranformada em array de bytes
 
-SecurityTokenDescriptor: 
+**SecurityTokenDescriptor:** 
 
-·  Claims: Define as reivindicações (claims) do token, que são pares chave-valor que armazenam informações sobre o usuário. Neste caso, ClaimTypes.Name armazena o nome do usuário e ClaimTypes.Role armazena o papel (role) do usuário.
-·  Expiração: Define a data e hora de expiração do token (1 hora a partir da data e hora atual).
-·  Assinatura: Define as credenciais de assinatura usando a chave secreta e o algoritmo HMAC SHA256.
+	1- Claims: Define as reivindicações (claims) do token, que são pares chave-valor que armazenam informações sobre o usuário. Neste caso, ClaimTypes.Name armazena o nome do usuário e ClaimTypes.Role armazena o papel (role) do usuário.
+	2- Expiração: Define a data e hora de expiração do token (1 hora a partir da data e hora atual).
+	3- Assinatura: Define as credenciais de assinatura usando a chave secreta e o algoritmo HMAC SHA256.
 
-tokenHandler: 
+**tokenHandler:**
 
-·  Criação do Token: Usa o tokenHandler para criar o token JWT com base no tokenDescriptor.
-·  Escrita do Token: Converte o token para sua representação em string.
-
-
-
-
-
-
-
-
-
-
-
-
-
+	1- Criação do Token: Usa o tokenHandler para criar o token JWT com base no tokenDescriptor.
+	2- Escrita do Token: Converte o token para sua representação em string.
 
  As classes SecretService e UserService devem ser colocadas na camada de Application\Services. Esta camada é responsável por orquestrar as operações de negócio e atuar como intermediária entre a camada de domínio (onde estão as regras de negócio) e a camada de infraestrutura (onde estão os repositórios e outros serviços de acesso a dados).
 
  Suas Interfaces ficarão em Application\Interfaces.
 
  
+![Classe IUserService](assets/Imagem49.png)
 
-
+![Classe ISecretService](assets/Imagem50.png)
 
 UserServices: 
 
