@@ -4,7 +4,7 @@
 
 - [Introdução](#Introdução)
 
-- [Arquitetura ONION](#Arquitetura Onion)
+- [Arquitetura Onion](#arquitetura-onion)
  
 
 
@@ -179,10 +179,10 @@ Vamos agora criar os métodos necessários  para utilizar o DB na aplicação.
 
 Criaremos as interfaces do repositório na camada Domain. A camada Domain é o núcleo da aplicação onde estão as entidades de negócio e as interfaces do repositorio.<br>
  Pela arquitetura :<br>
-·  Independência das Camadas Externas:<br>
-	As camadas externas podem mudar mais frequentemente do que as internas. Por exemplo, você pode trocar a implementação de acesso a dados (camada Infrastructure) sem afetar as regras de negócio (camada Domain).<br>
-·  Dependências Invertidas:<br>
-	As camadas externas dependem das internas e nunca o contrário. Isso significa que a Domain não deve depender de implementações específicas de infraestrutura.<br>
+	**Independência das Camadas Externas:**<br>
+		As camadas externas podem mudar mais frequentemente do que as internas. Por exemplo, você pode trocar a implementação de acesso a dados (camada Infrastructure) sem afetar as regras de negócio (camada Domain).<br>
+	**Dependências Invertidas:**<br>
+		As camadas externas dependem das internas e nunca o contrário. Isso significa que a Domain não deve depender de implementações específicas de infraestrutura.<br>
  
  Interfaces:
 
@@ -198,9 +198,9 @@ e
 
 A classe SecretRepository implementa a interface ISecretRepository:
 
- *Busca por Chave:* GetByKeyAsync recupera um segredo com base na chave fornecida.
- *Adição de Segredos:* AddAsync adiciona um novo segredo ao banco de dados.
- *Listagem de Segredos:* GetAllAsync retorna todos os segredos no banco de dados.(lista apenas os nomes (Key) e não os valores)
+ **Busca por Chave:** GetByKeyAsync recupera um segredo com base na chave fornecida.
+ **Adição de Segredos:** AddAsync adiciona um novo segredo ao banco de dados.
+ **Listagem de Segredos:** GetAllAsync retorna todos os segredos no banco de dados.(lista apenas os nomes (Key) e não os valores)
  
 e 
 
@@ -208,18 +208,18 @@ e
 
 A classe UserRepository implementa a interface IUserRepository :
 
- *Adição de Usuários:* AddAsync adiciona um novo usuário ao banco de dados.
- *Busca de Usuários:* GetByUsernameAndPasswordAsync e GetByUsernameAsync recuperam usuários.
- *Atualização de Usuários:* UpdateAsync atualiza um usuário existente.
- *Listagem de Usuários:* GetAllAsync retorna todos os usuários no banco de dados.
+ **Adição de Usuários:** AddAsync adiciona um novo usuário ao banco de dados.
+ **Busca de Usuários:* GetByUsernameAndPasswordAsync e GetByUsernameAsync recuperam usuários.
+ **Atualização de Usuários:** UpdateAsync atualiza um usuário existente.
+ **Listagem de Usuários:** GetAllAsync retorna todos os usuários no banco de dados.
 
 Todos os secredos e senhas gravados no banco serão criptografados. Assim vamos criar a classe EncryptionService como os métodos Encrypt e Decrypt para encriptar e desencriptar os registros.
 
 Esta classe será crida na camada Infrastructure\Services. Porque : 
 
- *Responsabilidade:* A criptografia e descriptografia de dados são detalhes de implementação e não fazem parte do domínio do negócio. Eles são aspectos técnicos que podem variar sem afetar as regras de negócio.<br>
- *Flexibilidade:* Colocar o serviço de criptografia na camada de infraestrutura permite que você altere a implementação da criptografia (por exemplo, trocar o algoritmo de criptografia) sem afetar outras partes da aplicação (Domínio de ter pouca alteração).<br>
- *Separação de Preocupações (Separation of Concerns - SoC):* Mantém a lógica de negócio limpa e focada em suas responsabilidades específicas, delegando as preocupações de segurança para a camada apropriada.<br>
+ **Responsabilidade:** A criptografia e descriptografia de dados são detalhes de implementação e não fazem parte do domínio do negócio. Eles são aspectos técnicos que podem variar sem afetar as regras de negócio.<br>
+ **Flexibilidade:** Colocar o serviço de criptografia na camada de infraestrutura permite que você altere a implementação da criptografia (por exemplo, trocar o algoritmo de criptografia) sem afetar outras partes da aplicação (Domínio de ter pouca alteração).<br>
+ **Separação de Preocupações (Separation of Concerns - SoC):** Mantém a lógica de negócio limpa e focada em suas responsabilidades específicas, delegando as preocupações de segurança para a camada apropriada.<br>
 
 A sua interface IEncryptionService será criada na camada Applications. A camada Infrastructure deve conter as implementações enquanto Application e Domain dependem de abstrações. Como esta interface não está ligada ao negócio em si, ficará na Application\Interfaces.<br>
 
@@ -229,54 +229,60 @@ E a classe EncryptionService:
 
 Construtor: 
 
-![Classe EncryptionService](assets/Imagem26.png)
+![Classe EncryptionService construtor](assets/Imagem26.png)
 
 No construtor recebe-se  a chave da criptografia converte para um array de bytes que será usado nos métodos.
 
 Encrypt:
 
+![Classe EncryptionService Encrypt](assets/Imagem27.png)
 
 
-
-1-Cria uma instância de AES para criar a Criptografia
-2-Atribui a chave _key ao objeto aes
-3-Gera o Vetor de Inicialização (IV) O IV é um bloco de bits usado para iniciar o processo de criptografia de maneira segura. Seu objetivo principal é garantir que o mesmo texto em claro criptografado duas vezes com a mesma chave produza diferentes textos cifrados. Isso evita padrões repetidos e aumenta a segurança da criptografia. 
-4- Encryptor é  uma interface ICryptoTransform () para a operação de criptografia usando a chave(Key) e o IV gerados.
-5- MemoryStream é criado para armazena os dados da criptografia na memoria.
-6-CryptoStream  escreve o dado criptografado no MemoryStream  criado.
-7-StreamWriter escreve o texto (plainText) no CryptoStream, onde ele será criptografado e armazenado no MemoryStream.
-8-encryptedContent armazena a array de bytes extraidos de MemoryStream
-9- Result armazena um array de bytes  criado para armazenar o IV seguido pelos dados criptografados. Isso é importante para a descriptografia futura, pois o IV é necessário para decifrar os dados.
-10-Em Buffer.BlockCopy o IV e os dados criptografados são copiados para o array resultante.
-11- Em return  o array resultante (contendo o IV e os dados criptografados) é convertido para uma string codificada em Base64, que é então retornada pelo método. A codificação em Base64 é usada para representar dados binários em formato de texto, facilitando o armazenamento e a transmissão.
+1-Cria uma instância de AES para criar a Criptografia<br>
+2-Atribui a chave _key ao objeto aes<br>
+3-Gera o Vetor de Inicialização (IV) O IV é um bloco de bits usado para iniciar o processo de criptografia de maneira segura. Seu objetivo principal é garantir que o mesmo texto em claro criptografado duas vezes com a mesma chave produza diferentes textos cifrados. Isso evita padrões repetidos e aumenta a segurança da criptografia. <br>
+4- Encryptor é  uma interface ICryptoTransform () para a operação de criptografia usando a chave(Key) e o IV gerados.<br>
+5- MemoryStream é criado para armazena os dados da criptografia na memoria.<br>
+6-CryptoStream  escreve o dado criptografado no MemoryStream  criado.<br>
+7-StreamWriter escreve o texto (plainText) no CryptoStream, onde ele será criptografado e armazenado no MemoryStream.<br>
+8-encryptedContent armazena a array de bytes extraidos de MemoryStream<br>
+9- Result armazena um array de bytes  criado para armazenar o IV seguido pelos dados criptografados. Isso é importante para a descriptografia futura, pois o IV é necessário para decifrar os dados.<br>
+10-Em Buffer.BlockCopy o IV e os dados criptografados são copiados para o array resultante.<br>
+11- Em return  o array resultante (contendo o IV e os dados criptografados) é convertido para uma string codificada em Base64, que é então retornada pelo método. A codificação em Base64 é usada para representar dados binários em formato de texto, facilitando o armazenamento e a transmissão.<br>
 
 Decrpty:
 
+![Classe EncryptionService Decrypt](assets/Imagem28.png)
 
-
-var fullCipher é carregado com  Array de bytes que armazena que contém tanto o vetor de inicialização (IV) quanto o texto cifrado.
+**var fullCipher** é carregado com  Array de bytes que armazena que contém tanto o vetor de inicialização (IV) quanto o texto cifrado.
 
 Neste trecho, o método separa o IV e o texto cifrado do array de bytes fullCipher:
 
-Criação dos Arrays de Bytes:
-oiv é um array de bytes com tamanho igual ao tamanho do bloco do algoritmo AES.
-ocipher é um array de bytes que contém o restante dos dados após o IV.
-Cópia dos Dados:
-oIV: Os primeiros bytes de fullCipher são copiados para o array iv.
-oTexto Cifrado: Os bytes restantes de fullCipher são copiados para o array cipher.
-Cria-se o CryptoStream para leitura:
-	
-1- Cria um ICryptoTransform para descriptografar os dados usando a chave e o IV configurados.  
-2-Inicializa um MemoryStream com os dados cifrados (cipher).
-3-Cria um CryptoStream para leitura (CryptoStreamMode.Read) usando o decryptor.
-4-Inicializa um StreamReader para ler o texto em claro a partir do CryptoStream.
+![Classe EncryptionService fullCipher](assets/Imagem29.png)
 
-valorDecripy Recebe o valor descriptografado de StreamReader (sr).
+**Criação dos Arrays de Bytes:** <br>
+ 1- iv é um array de bytes com tamanho igual ao tamanho do bloco do algoritmo AES.<br><br> 
+ 2- cipher é um array de bytes que contém o restante dos dados após o IV.<br>
+ 
+**Cópia dos Dados:**
+ 1- IV: Os primeiros bytes de fullCipher são copiados para o array iv.<br>
+ 2- Texto Cifrado: Os bytes restantes de fullCipher são copiados para o array cipher.<br>
+
+**Cria-se o CryptoStream para leitura:**
+
+![Classe EncryptionService CryptoStream](assets/Imagem30.png)
+	
+1- Cria um ICryptoTransform para descriptografar os dados usando a chave e o IV configurados.<br>  
+2-Inicializa um MemoryStream com os dados cifrados (cipher).<br>
+3-Cria um CryptoStream para leitura (CryptoStreamMode.Read) usando o decryptor.<br>
+4-Inicializa um StreamReader para ler o texto em claro a partir do CryptoStream.<br>
+
+*valorDecripy* Recebe o valor descriptografado de StreamReader (sr).
 
 
 Até aqui temos:
 
-
+![Estrutura de pastas até EncryptionService](assets/Imagem31.png)
 
 Com o processo de criptografia pronto podemos salvar dados de forma segura no banco de dados.
 Neste ponto vamos preparar a inserção do usuário Admin que tem os dados definidos em settings. Ele tem uma senha inicial que deve ser definida durante a implantação. Ela será salva criptografada no banco. Depois desta primeira inserção esta senha deve ser modificada.
