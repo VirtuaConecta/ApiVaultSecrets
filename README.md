@@ -198,9 +198,9 @@ e
 
 A classe SecretRepository implementa a interface ISecretRepository:
 
- **Busca por Chave:** GetByKeyAsync recupera um segredo com base na chave fornecida.
- **Adição de Segredos:** AddAsync adiciona um novo segredo ao banco de dados.
- **Listagem de Segredos:** GetAllAsync retorna todos os segredos no banco de dados.(lista apenas os nomes (Key) e não os valores)
+ **Busca por Chave:** GetByKeyAsync recupera um segredo com base na chave fornecida.<br>
+ **Adição de Segredos:** AddAsync adiciona um novo segredo ao banco de dados.<br>
+ **Listagem de Segredos:** GetAllAsync retorna todos os segredos no banco de dados.(lista apenas os nomes (Key) e não os valores)<br>
  
 e 
 
@@ -208,10 +208,10 @@ e
 
 A classe UserRepository implementa a interface IUserRepository :
 
- **Adição de Usuários:** AddAsync adiciona um novo usuário ao banco de dados.
- **Busca de Usuários:* GetByUsernameAndPasswordAsync e GetByUsernameAsync recuperam usuários.
- **Atualização de Usuários:** UpdateAsync atualiza um usuário existente.
- **Listagem de Usuários:** GetAllAsync retorna todos os usuários no banco de dados.
+ **Adição de Usuários:** AddAsync adiciona um novo usuário ao banco de dados.<br>
+ **Busca de Usuários:* GetByUsernameAndPasswordAsync e GetByUsernameAsync recuperam usuários.<br>
+ **Atualização de Usuários:** UpdateAsync atualiza um usuário existente.<br>
+ **Listagem de Usuários:** GetAllAsync retorna todos os usuários no banco de dados.<br>
 
 Todos os secredos e senhas gravados no banco serão criptografados. Assim vamos criar a classe EncryptionService como os métodos Encrypt e Decrypt para encriptar e desencriptar os registros.
 
@@ -284,32 +284,20 @@ Até aqui temos:
 
 ![Estrutura de pastas até EncryptionService](assets/Imagem31.png)
 
-Com o processo de criptografia pronto podemos salvar dados de forma segura no banco de dados.
+Com o processo de criptografia pronto podemos salvar dados de forma segura no banco de dados.<br>
 Neste ponto vamos preparar a inserção do usuário Admin que tem os dados definidos em settings. Ele tem uma senha inicial que deve ser definida durante a implantação. Ela será salva criptografada no banco. Depois desta primeira inserção esta senha deve ser modificada.
 
-Antes de tudo temos que registrar as interfaces nas configurações e criar a chave de criptografia.
+Antes de tudo temos que registrar as interfaces nas configurações e criar a chave de criptografia.<br>
 
-Chave de criptografia: não deve ficar exposta. Em ambiente de texto pode-se usar o user-secrets, mas para exemplificar uma possibilidade em produção vamos criar uma variável de ambiente (Windows) e usá-la no código.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+**Chave de criptografia:** não deve ficar exposta. Em ambiente de texto pode-se usar o user-secrets, mas para exemplificar uma possibilidade em produção vamos criar uma variável de ambiente (Windows) e usá-la no código.
 
 Crie uma variável de Ambiente: 
 
        
-
+<p float="left">
+  <img src="assets/Imagem32.png" width="200" style="margin-right: 10px;"/>
+  <img src="assets/Imagem33.png" width="200" style="margin-left: 10px;" /> 
+</p>
 
 Agora registramos em Program.cs:
 
