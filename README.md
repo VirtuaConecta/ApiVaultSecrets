@@ -28,19 +28,24 @@ Não usaremos controllers, docker, HTTPS ou swagger:
 ![Tela de informações adicionais do projeto](assets/Imagem3.png)
 
 
-Arquitetura Onion: 
+__ Arquitetura Onion:  __ <br>
+
 A arquitetura Onion é uma abordagem para resolver os problemas de acoplamento e separação de responsabilidades encontrados na arquitetura tradicional em três camadas. Ela é visualmente representada como círculos concêntricos, similares a uma cebola cortada ao meio, onde cada camada representa um nível de abstração.
-A divisão comum das camadas na arquitetura Onion é a seguinte:
-1.Domain: Esta é a camada mais central e não deve ter dependências de outras camadas externas. Ela contém a lógica de negócio e as entidades do domínio.
-2.Service/Application: Esta camada coordena a lógica de aplicação e usa as regras de negócios definidas no domínio.
-3.Infrastructure: Inclui a implementação de interfaces e os detalhes de acesso a dados, como repositórios e serviços externos.
-4.Presentation: Responsável pela interface do usuário e interações, sendo geralmente a camada mais externa.
+A divisão comum das camadas na arquitetura Onion é a seguinte:<br>
+1.Domain: Esta é a camada mais central e não deve ter dependências de outras camadas externas. Ela contém a lógica de negócio e as entidades do domínio.<br>
+2.Service/Application: Esta camada coordena a lógica de aplicação e usa as regras de negócios definidas no domínio.<br>
+3.Infrastructure: Inclui a implementação de interfaces e os detalhes de acesso a dados, como repositórios e serviços externos.<br>
+4.Presentation: Responsável pela interface do usuário e interações, sendo geralmente a camada mais externa.<br>
+
+
 Um dos principais benefícios da arquitetura Onion é que ela promove o baixo acoplamento e a alta coesão. As dependências fluem de fora para dentro, significando que as camadas externas podem referenciar as camadas internas, mas não o contrário. Isso permite encapsular a lógica de negócio nas camadas de domínio e aplicação, mantendo-a isolada dos detalhes de implementação específicos da infraestrutura.
 Além disso, as camadas externas (Infrastructure e Presentation) podem implementar interfaces definidas nas camadas internas, permitindo uma maior flexibilidade e testabilidade, pois a lógica de negócios pode ser testada independentemente dos detalhes de implementação.
 Em resumo, a arquitetura Onion facilita a manutenção e a escalabilidade de sistemas complexos, promovendo boas práticas de design, como a inversão de dependência e a separação de responsabilidades.
 Vamos com começar criando as entidades e a estrutura de dados. Neste projeto usaremos o ORM (Object-Relational Mappers) Entity Framework (EF).
 A primeira coisa a fazer é Instalar os pacotes para o EF. Neste projeto o banco de dados é um Sqlite.
+
 São:
+
 Microsoft.EntityFrameworkCore.Sqlite - Fornece suporte ao banco de dados SQLite no Entity FrameWork Core.
 Microsoft.EntityFrameworkCore.Design - Pacote necessário para executar comandos do EF que geram código. Será usado para criar as tabelas.
 Microsoft.EntityFrameworkCore.Tools - Este pacote permite a execução de comandos EF Core no CLI (Command Line Interface) e no Package Manager Console do Visual Studio. Ele é utilizado para facilitar a criação, aplicação e gerenciamento de migrações de banco de dados e outras tarefas de manutenção do esquema do banco de dados.
